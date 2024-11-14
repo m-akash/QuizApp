@@ -3,17 +3,17 @@ package com.akash.QuizApp.controller;
 import com.akash.QuizApp.model.QuestionWrapper;
 import com.akash.QuizApp.model.Response;
 import com.akash.QuizApp.service.QuizService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
-    @Autowired
-    QuizService quizService;
+    private final QuizService quizService;
 
     @PostMapping("/create")
     public ResponseEntity<String> createQuiz(@RequestParam String category, @RequestParam int numQ, @RequestParam String title) {

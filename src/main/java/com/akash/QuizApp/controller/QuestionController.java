@@ -1,5 +1,8 @@
 package com.akash.QuizApp.controller;
 
+import com.akash.QuizApp.Exception.NotFoundException;
+import com.akash.QuizApp.Request.UpdateRequest;
+import com.akash.QuizApp.Response.ApiResponse;
 import com.akash.QuizApp.model.Question;
 import com.akash.QuizApp.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @RestController
 @RequestMapping("/question")
 public class QuestionController {
@@ -15,27 +20,38 @@ public class QuestionController {
     QuestionService questionService;
 
     @GetMapping("/allQuestion")
-    public ResponseEntity<List<Question>> getAllQuestion() {
+    public List<Question> getAllQuestion() {
         return questionService.getAllQuestion();
     }
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<Question>> getQuestionByCategory(@PathVariable String category){
-        return questionService.getQuestionByCategory(category);
+    @GetMapping("/category/{categoryName}")
+    public List<Question> getQuestionByCategory(@PathVariable String categoryName){
+        return questionService.getQuestionByCategory(categoryName);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addQuestion(@RequestBody Question question){
+    public Question addQuestion(@RequestBody Question question){
         return questionService.addQuestion(question);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<String> UpdateQuestion(@RequestBody Question question){
-      return questionService.UpdateQuestion(question);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse> UpdateQuestion(@PathVariable Integer id, @RequestBody UpdateRequest question){
+        try {
+            Question UpQuestion = questionService.UpdateQuestion(question, id);
+            return ResponseEntity.ok(new ApiResponse("Question Update Successfully", UpQuestion));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> DeleteQuestion(@PathVariable Integer id){
-       return questionService.DeleteQuestion(id);
+    public ResponseEntity<ApiResponse> DeleteQuestion(@PathVariable Integer id){
+        try {
+            questionService.DeleteQuestion(id);
+            return ResponseEntity.ok(new ApiResponse("Question deleted successfully", null));
+        }
+        catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.akash.QuizApp.model.Quiz;
 import com.akash.QuizApp.model.Response;
 import com.akash.QuizApp.repo.QuestionRepository;
 import com.akash.QuizApp.repo.QuizRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class QuizService {
-    @Autowired
-    QuizRepo quizRepo;
-    @Autowired
-    QuestionRepository questionRepository;
+    private final QuizRepo quizRepo;
+    private final QuestionRepository questionRepository;
 
     public ResponseEntity<String> createQuiz(String category, int numQ, String title) {
         try {
@@ -33,7 +33,7 @@ public class QuizService {
         } catch (Exception e) {
             e.fillInStackTrace();
         }
-        return new ResponseEntity<>("Unsuccessful attemp!", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Unsuccessful attempt!", HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(Integer id) {
@@ -60,8 +60,9 @@ public class QuizService {
         int right = 0;
         int i = 0;
         for (Response response : responses) {
-            if (response.getResponse().equals(questions.get(i).getRightAnswer()))
+            if (response.getResponse().equals(questions.get(i).getRightAnswer())) {
                 right++;
+            }
             i++;
         }
         return new ResponseEntity<>(right, HttpStatus.OK);
