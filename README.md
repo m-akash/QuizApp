@@ -28,7 +28,7 @@ Optional: MySQL (if not using H2)
 
 # Clone the Repository
 
-git clone 
+git clone https://github.com/m-akash/QuizApp.git
 
 # Configure Database
 
